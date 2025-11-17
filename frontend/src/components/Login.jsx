@@ -6,7 +6,6 @@ function Login({ onSuccess }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // TODO: Connect to backend API
     console.log("Login:", { email, password });
     onSuccess();
   };
@@ -15,10 +14,20 @@ function Login({ onSuccess }) {
     <div className="form-card">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <label>Email:</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <label>Password:</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
         <button type="submit">Login</button>
       </form>
     </div>
@@ -26,5 +35,3 @@ function Login({ onSuccess }) {
 }
 
 export default Login;
-
-

@@ -1,49 +1,16 @@
-/* Global Styles */
+/* ================= Global Styles ================= */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f0f4f8;
   margin: 0;
   padding: 0;
+  background: #f3f4f6;
   color: #333;
 }
 
-/* Header */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 50px;
-  background: linear-gradient(90deg, #6366f1, #4f46e5);
-  color: white;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.header h1 {
-  margin: 0;
-  font-size: 2rem;
-}
-
-.header button {
-  padding: 8px 20px;
-  background-color: #f87171;
-  border-radius: 8px;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s ease;
-}
-
-.header button:hover {
-  background-color: #ef4444;
-}
-
-/* First-time user card */
+/* ================= First-time user card ================= */
 .first-time-card {
   max-width: 400px;
-  margin: 100px auto;
+  margin: 80px auto;
   padding: 40px 30px;
   background: linear-gradient(145deg, #ffffff, #e0e7ff);
   border-radius: 16px;
@@ -62,8 +29,8 @@ body {
 }
 
 .first-time-card button {
-  margin: 0 10px;
-  padding: 10px 25px;
+  margin: 10px 15px;
+  padding: 12px 30px;
   border-radius: 12px;
   font-weight: bold;
   background-color: #4f46e5;
@@ -78,93 +45,228 @@ body {
   transform: translateY(-2px);
 }
 
-/* Forms and dashboard cards */
-.form-card,
-.expense-card {
-  background: linear-gradient(145deg, #ffffff, #e0e7ff);
+/* ================= Dashboard Layout ================= */
+.dashboard-layout {
+  display: flex;
+  height: 100vh;
+}
+
+/* ================= Sidebar ================= */
+.sidebar {
+  width: 230px;
+  background: #1e3a8a;
+  color: white;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar-title {
+  font-size: 1.6rem;
+  margin-bottom: 30px;
+}
+
+.sidebar-menu a {
+  display: block;
+  padding: 12px 0;
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar-menu a:hover {
+  opacity: 1;
+  transform: translateX(5px);
+}
+
+.logout-btn {
+  background: #ef4444;
+  padding: 12px;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #dc2626;
+}
+
+/* ================= Dashboard Main ================= */
+.dashboard-main {
+  flex: 1;
   padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
-  max-width: 400px;
-  margin: 20px auto;
-  transition: transform 0.2s ease;
+  overflow-y: auto;
 }
 
-.form-card:hover,
-.expense-card:hover {
-  transform: translateY(-5px);
-}
-
-.form-card h2,
-.expense-card h3 {
+.dashboard-title {
+  font-size: 2rem;
   margin-bottom: 20px;
   color: #1e3a8a;
 }
 
-.form-card label {
-  display: block;
-  margin-top: 15px;
+/* ================= Stats Cards ================= */
+.stats-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.analytics-card,
+.summary {
+  padding: 25px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.analytics-card:hover,
+.summary:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+.big-number {
+  font-size: 2rem;
   font-weight: bold;
+  color: #1e40af;
+  margin: 10px 0 20px 0;
 }
 
-.form-card input {
-  width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  border-radius: 10px;
-  border: 1px solid #cbd5e1;
+.analytics-card h3,
+.summary h3 {
+  margin-bottom: 15px;
+  color: #1e3a8a;
 }
 
-/* Buttons */
-button {
-  padding: 10px 20px;
-  margin-top: 20px;
-  border: none;
+/* ================= Income Input ================= */
+.income-input {
+  width: 80%;
+  padding: 12px 15px;
   border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.income-input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 6px rgba(79,70,229,0.3);
+  outline: none;
+}
+
+/* ================= Dashboard Grid ================= */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+/* ================= Expense Form ================= */
+.expense-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.expense-form label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #1e3a8a;
+}
+
+.expense-form input,
+.expense-form select,
+.expense-form .custom-category-input {
+  padding: 12px 15px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.expense-form input:focus,
+.expense-form select:focus,
+.expense-form .custom-category-input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 5px rgba(79, 70, 229, 0.5);
+  outline: none;
+}
+
+/* ================= Custom Category Animation ================= */
+.custom-category-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.custom-category-wrapper.show {
+  max-height: 100px;
+  opacity: 1;
+}
+
+/* ================= Buttons ================= */
+.primary-btn {
   background-color: #4f46e5;
   color: white;
-  cursor: pointer;
   font-weight: bold;
-  transition: background 0.3s ease, transform 0.2s ease;
+  border-radius: 12px;
+  padding: 12px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 
-button:hover {
+.primary-btn:hover {
   background-color: #4338ca;
   transform: translateY(-2px);
 }
 
-/* Expense container */
-.expense-container {
-  max-width: 900px;
-  margin: 30px auto;
-  padding: 0 20px;
+.download-buttons {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
+  margin-top: 15px;
 }
 
-/* Summary */
-.summary {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: linear-gradient(135deg, #ffffff, #dbeafe);
-  border-radius: 16px;
-  padding: 25px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-}
-
-.summary h3 {
-  margin-bottom: 10px;
-  color: #1e40af;
-}
-
-.summary ul {
-  list-style: none;
-  padding: 0;
-}
-
-.summary li {
-  color: #1e3a8a;
+.download-btn {
+  padding: 12px;
+  border-radius: 12px;
   font-weight: bold;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.download-btn:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.download-btn:active {
+  transform: scale(0.95);
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 900px) {
+  .dashboard-grid,
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    width: 200px;
+  }
 }
