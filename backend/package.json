@@ -1,18 +1,16 @@
 {
-<<<<<<< HEAD
-  "dependencies": {
-    "axios": "^1.13.2"
-=======
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "SpendSmart Express API with PostgreSQL",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -21,6 +19,5 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
->>>>>>> 3624f38 (Initial backend commit)
   }
 }
