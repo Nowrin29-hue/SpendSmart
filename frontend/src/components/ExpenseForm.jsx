@@ -27,21 +27,20 @@ export default function ExpenseForm({ addExpense }) {
       category: finalCategory,
       amount: Number(amount),
       title,
-      date, // save the date
+      date,
     });
 
     setCategory("Grocery");
     setCustomCategory("");
     setAmount("");
     setTitle("");
-    setDate(getTodayISODate()); // reset to today on submit
+    setDate(getTodayISODate());
   };
 
   return (
     <div className="expense-card">
       <h3>Add Expense</h3>
       <form className="expense-form" onSubmit={handleSubmit}>
-        {/* Category */}
         <label>Category</label>
         <select
           value={category}
@@ -68,7 +67,6 @@ export default function ExpenseForm({ addExpense }) {
           />
         </div>
 
-        {/* Date */}
         <label>Date</label>
         <input
           type="date"
@@ -76,7 +74,6 @@ export default function ExpenseForm({ addExpense }) {
           onChange={(e) => setDate(e.target.value)}
         />
 
-        {/* Amount */}
         <label>Amount (€)</label>
         <input
           type="number"
@@ -85,7 +82,6 @@ export default function ExpenseForm({ addExpense }) {
           onChange={(e) => setAmount(e.target.value)}
         />
 
-        {/* Title/Details */}
         <label>Title/Details</label>
         <input
           type="text"

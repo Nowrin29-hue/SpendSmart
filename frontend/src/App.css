@@ -116,6 +116,7 @@ body {
   margin-bottom: 30px;
 }
 
+/* we override .sidebar-menu below for buttons layout */
 .sidebar-menu a {
   display: block;
   padding: 12px 0;
@@ -306,6 +307,196 @@ body {
 
 .download-btn:active {
   transform: scale(0.95);
+}
+
+/* ================= Sidebar extra sections (legacy, if needed) ================= */
+.sidebar-section {
+  margin-top: 25px;
+}
+
+.sidebar-section-title {
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+}
+
+.sidebar-balance {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+.sidebar-send-btn {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border: none;
+  background-color: #10b981;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.sidebar-send-btn:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+}
+
+.sidebar-help-text {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+/* ================= Sidebar navigation buttons ================= */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-link {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: background 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+}
+
+.sidebar-link:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
+}
+
+.sidebar-link.active {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.16);
+  font-weight: 600;
+}
+
+/* ================= Savings bar visuals ================= */
+.savings-bar-container {
+  width: 100%;
+  height: 12px;
+  background-color: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.savings-bar {
+  height: 100%;
+  border-radius: 999px;
+}
+
+/* ================= Send Money page ================= */
+.send-money-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.send-money-hero {
+  padding: 20px 24px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+}
+
+.send-money-hero h2 {
+  margin: 0 0 8px 0;
+}
+
+.send-money-hero p {
+  margin: 0;
+  opacity: 0.95;
+}
+
+.providers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.provider-card {
+  border: none;
+  text-align: left;
+  padding: 18px 16px;
+  border-radius: 16px;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.provider-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+
+.provider-card h3 {
+  margin: 10px 0 6px 0;
+  color: #1f2937;
+}
+
+.provider-card p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+/* Colored animated visual area to make UI lively */
+.provider-visual {
+  height: 70px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
+
+/* different colors per provider */
+.provider-card.paypal .provider-visual {
+  background-image: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.provider-card.remitly .provider-visual {
+  background-image: linear-gradient(135deg, #10b981, #0f766e);
+}
+
+.provider-card.taptap .provider-visual {
+  background-image: linear-gradient(135deg, #f97316, #ea580c);
+}
+
+/* Smooth gradient animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ================= Download Reports page ================= */
+.download-page {
+  max-width: 600px;
+  margin-top: 10px;
+}
+
+.download-card p {
+  margin-bottom: 15px;
 }
 
 /* ================= Responsive ================= */
