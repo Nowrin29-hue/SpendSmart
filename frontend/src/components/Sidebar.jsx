@@ -35,6 +35,13 @@ export default function Sidebar({
           </button>
           <button
             type="button"
+            className={navButtonClass("settings")}
+            onClick={() => onNavigate("settings")}
+          >
+            Settings
+          </button>
+          <button
+            type="button"
             className={navButtonClass("help")}
             onClick={() => onNavigate("help")}
           >

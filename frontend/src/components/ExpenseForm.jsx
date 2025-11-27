@@ -8,25 +8,45 @@ function getTodayISODate() {
   return `${year}-${month}-${day}`;
 }
 
-export default function ExpenseForm({ addExpense }) {
+export default function ExpenseForm({ addExpense, currencySymbol }) {
   const [category, setCategory] = useState("Grocery");
   const [customCategory, setCustomCategory] = useState("");
   const [amount, setAmount] = useState("");
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(getTodayISODate());
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const finalCategory =
-      category === "Other" ? customCategory : category;
+      category === "Other" ? customCategory.trim() : category;
 
-    if (!finalCategory || !amount || !title || !date) return;
+    if (!finalCategory) {
+      setError("Please choose a category.");
+      return;
+    }
+
+    if (!title.trim()) {
+      setError("Please enter a title or note.");
+      return;
+    }
+
+    const numericAmount = Number(amount);
+    if (!numericAmount || numericAmount <= 0) {
+      setError("Amount must be greater than 0.");
+      return;
+    }
+
+    if (!date) {
+      setError("Please select a date.");
+      return;
+    }
 
     addExpense({
       category: finalCategory,
-      amount: Number(amount),
-      title,
+      amount: numericAmount,
+      title: title.trim(),
       date,
     });
 
@@ -35,6 +55,7 @@ export default function ExpenseForm({ addExpense }) {
     setAmount("");
     setTitle("");
     setDate(getTodayISODate());
+    setError("");
   };
 
   return (
@@ -63,7 +84,9 @@ export default function ExpenseForm({ addExpense }) {
             className="custom-category-input"
             placeholder="Enter custom category"
             value={customCategory}
-            onChange={(e) => setCustomCategory(e.target.value)}
+            onChange={(e) =>
+              setCustomCategory(e.target.value)
+            }
           />
         </div>
 
@@ -74,10 +97,12 @@ export default function ExpenseForm({ addExpense }) {
           onChange={(e) => setDate(e.target.value)}
         />
 
-        <label>Amount (€)</label>
+        <label>Amount ({currencySymbol})</label>
         <input
           type="number"
-          placeholder="Amount"
+          min="0"
+          step="0.01"
+          placeholder={`Amount in ${currencySymbol}`}
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
@@ -85,10 +110,14 @@ export default function ExpenseForm({ addExpense }) {
         <label>Title/Details</label>
         <input
           type="text"
-          placeholder="Title or Details"
+          placeholder="Groceries, rent, subscription..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
+
+        {error && (
+          <p className="form-error-message">{error}</p>
+        )}
 
         <button className="primary-btn" type="submit">
           Add Expense

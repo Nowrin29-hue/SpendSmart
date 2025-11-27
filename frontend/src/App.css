@@ -116,21 +116,6 @@ body {
   margin-bottom: 30px;
 }
 
-/* we override .sidebar-menu below for buttons layout */
-.sidebar-menu a {
-  display: block;
-  padding: 12px 0;
-  font-size: 1.1rem;
-  cursor: pointer;
-  opacity: 0.9;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.sidebar-menu a:hover {
-  opacity: 1;
-  transform: translateX(5px);
-}
-
 .logout-btn {
   background: #ef4444;
   padding: 12px;
@@ -145,6 +130,39 @@ body {
   background: #dc2626;
 }
 
+/* ================= Sidebar navigation buttons ================= */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-link {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: background 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+}
+
+.sidebar-link:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
+}
+
+.sidebar-link.active {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.16);
+  font-weight: 600;
+}
+
 /* ================= Dashboard Main ================= */
 .dashboard-main {
   flex: 1;
@@ -156,6 +174,28 @@ body {
   font-size: 2rem;
   margin-bottom: 20px;
   color: #1e3a8a;
+}
+
+/* inline success message */
+.inline-message {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.inline-message.success {
+  background-color: #ecfdf3;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* small subtitle under card titles */
+.card-subtitle {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+  color: #6b7280;
 }
 
 /* ================= Stats Cards ================= */
@@ -181,13 +221,6 @@ body {
   box-shadow: 0 12px 30px rgba(0,0,0,0.12);
 }
 
-.big-number {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #1e40af;
-  margin: 10px 0 20px 0;
-}
-
 .analytics-card h3,
 .summary h3 {
   margin-bottom: 15px;
@@ -209,6 +242,21 @@ body {
   border-color: #4f46e5;
   box-shadow: 0 0 6px rgba(79,70,229,0.3);
   outline: none;
+}
+
+/* ================= Savings bar visuals (unused now but kept) ================= */
+.savings-bar-container {
+  width: 100%;
+  height: 12px;
+  background-color: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.savings-bar {
+  height: 100%;
+  border-radius: 999px;
 }
 
 /* ================= Dashboard Grid ================= */
@@ -248,6 +296,12 @@ body {
   border-color: #4f46e5;
   box-shadow: 0 0 5px rgba(79, 70, 229, 0.5);
   outline: none;
+}
+
+.form-error-message {
+  margin: 4px 0 0 0;
+  font-size: 0.85rem;
+  color: #b91c1c;
 }
 
 /* ================= Custom Category Animation ================= */
@@ -309,92 +363,67 @@ body {
   transform: scale(0.95);
 }
 
-/* ================= Sidebar extra sections (legacy, if needed) ================= */
-.sidebar-section {
-  margin-top: 25px;
+.download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
-.sidebar-section-title {
-  font-size: 1.05rem;
-  margin-bottom: 10px;
+.download-hint {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-bottom: 8px;
 }
 
-.sidebar-balance {
-  font-size: 0.85rem;
-  opacity: 0.9;
-  margin-bottom: 10px;
+/* ================= List / empty states ================= */
+.empty-state {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #6b7280;
 }
 
-.sidebar-send-btn {
-  width: 100%;
-  padding: 8px 10px;
+.list-summary {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.expense-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
   margin-bottom: 8px;
   border-radius: 8px;
-  border: none;
-  background-color: #10b981;
-  color: white;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
 }
 
-.sidebar-send-btn:hover {
-  background-color: #059669;
-  transform: translateY(-1px);
-}
-
-.sidebar-help-text {
-  font-size: 0.85rem;
-  opacity: 0.9;
-}
-
-/* ================= Sidebar navigation buttons ================= */
-.sidebar-menu {
+.expense-main {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
-.sidebar-link {
-  width: 100%;
-  text-align: left;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
-  opacity: 0.9;
-  transition: background 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
-}
-
-.sidebar-link:hover {
-  opacity: 1;
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateX(4px);
-}
-
-.sidebar-link.active {
-  opacity: 1;
-  background: rgba(255, 255, 255, 0.16);
+.expense-title {
   font-weight: 600;
+  color: #111827;
 }
 
-/* ================= Savings bar visuals ================= */
-.savings-bar-container {
-  width: 100%;
-  height: 12px;
-  background-color: #e5e7eb;
-  border-radius: 999px;
-  overflow: hidden;
+.expense-meta {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.expense-amount {
+  font-weight: 600;
+  color: #1e40af;
+}
+
+/* ================= Settings layout ================= */
+.settings-card-wrapper {
+  max-width: 700px;
   margin-top: 10px;
-}
-
-.savings-bar {
-  height: 100%;
-  border-radius: 999px;
 }
 
 /* ================= Send Money page ================= */
@@ -454,13 +483,16 @@ body {
   font-size: 0.9rem;
 }
 
-/* Colored animated visual area to make UI lively */
+/* Animated visual area */
 .provider-visual {
   height: 70px;
   border-radius: 12px;
   margin-bottom: 10px;
   background-size: 200% 200%;
   animation: gradientShift 4s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* different colors per provider */
@@ -474,6 +506,14 @@ body {
 
 .provider-card.taptap .provider-visual {
   background-image: linear-gradient(135deg, #f97316, #ea580c);
+}
+
+.provider-logo {
+  max-height: 50px;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+  margin: 10px auto;
 }
 
 /* Smooth gradient animation */
@@ -499,6 +539,87 @@ body {
   margin-bottom: 15px;
 }
 
+/* ================= Budget status text (if used) ================= */
+.budget-status {
+  margin: 6px 0 10px 0;
+  font-size: 0.9rem;
+}
+
+.budget-status.ok {
+  color: #15803d;
+}
+
+.budget-status.over {
+  color: #b91c1c;
+}
+
+/* ================= Chart toggle buttons ================= */
+.chart-toggle {
+  display: inline-flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.chart-toggle-btn {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.chart-toggle-btn.active {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: white;
+}
+
+/* ================= Theme: light / dark via body[data-theme] ================= */
+body[data-theme="light"] {
+  background: #f3f4f6;
+  color: #333;
+}
+
+body[data-theme="dark"] {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+body[data-theme="dark"] .sidebar {
+  background: #020617;
+}
+
+body[data-theme="dark"] .analytics-card,
+body[data-theme="dark"] .expense-card,
+body[data-theme="dark"] .summary {
+  background: #020617;
+  color: #e5e7eb;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.8);
+}
+
+body[data-theme="dark"] .dashboard-main {
+  background: #0f172a;
+}
+
+body[data-theme="dark"] .expense-row {
+  background-color: #020617;
+  border-color: #1e293b;
+}
+
+body[data-theme="dark"] .income-input,
+body[data-theme="dark"] .expense-form input,
+body[data-theme="dark"] .expense-form select,
+body[data-theme="dark"] .expense-form .custom-category-input {
+  background-color: #020617;
+  color: #e5e7eb;
+  border-color: #1e293b;
+}
+
+body[data-theme="dark"] .download-btn {
+  background-color: #22c55e;
+}
+
 /* ================= Responsive ================= */
 @media (max-width: 900px) {
   .dashboard-grid,
@@ -508,5 +629,9 @@ body {
 
   .sidebar {
     width: 200px;
+  }
+
+  .settings-card-wrapper {
+    max-width: 100%;
   }
 }
