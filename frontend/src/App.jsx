@@ -286,12 +286,9 @@ function App() {
             <div className="analytics-card compact-card">
               <h3>How to use SpendSmart</h3>
               <p>
-                On the Dashboard, add expenses to track your
-                spending and view trends in the chart. Use Send
-                Money to open your preferred transfer provider,
-                Download Reports to export your data, and Settings
-                to manage your profile, budget, currency, and
-                theme.
+                Add expenses to track spending and view trends. Use Send Money for transfers, 
+                Download Reports to export data, and Settings to manage your profile, budget,
+                 currency, and theme.
               </p>
             </div>
           </>
