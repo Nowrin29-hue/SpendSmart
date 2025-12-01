@@ -10,7 +10,6 @@ import Sidebar from "./components/Sidebar.jsx";
 import Settings from "./components/Settings.jsx";
 import ExpensesChart from "./components/ExpensesChart.jsx";
 
-
 import paypalLogo from "./assets/paypal-logo.png";
 import remitlyLogo from "./assets/remitly-logo.png";
 import taptapLogo from "./assets/taptap-logo.png";
@@ -24,7 +23,11 @@ const currencySymbols = {
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showSignup, setShowSignup] = useState(null);
+
   const [expenses, setExpenses] = useState([]);
+  const [isLoadingExpenses, setIsLoadingExpenses] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
   const [currentPage, setCurrentPage] = useState("dashboard");
   const [message, setMessage] = useState("");
   const [monthlyBudget, setMonthlyBudget] = useState(0);
@@ -50,16 +53,16 @@ function App() {
     setCurrentPage("dashboard");
   };
 
+  const totalExpenses = expenses.reduce(
+    (sum, e) => sum + Number(e.amount),
+    0
+  );
+
   const addExpense = (expense) => {
     setExpenses((prev) => [...prev, expense]);
     setMessage("Expense added successfully.");
     setTimeout(() => setMessage(""), 2500);
   };
-
-  const totalExpenses = expenses.reduce(
-    (sum, e) => sum + Number(e.amount),
-    0
-  );
 
   const clearAllData = () => {
     const confirmClear = window.confirm(
@@ -73,7 +76,65 @@ function App() {
     setMessage("All data cleared.");
     setCurrentPage("dashboard");
     setTimeout(() => setMessage(""), 2500);
+
+    // also clear localStorage
+    localStorage.removeItem("spendsmart_expenses");
   };
+
+  // Load expenses from localStorage or dummy.json on first load
+  useEffect(() => {
+    async function initExpenses() {
+      try {
+        // 1) Try localStorage
+        const stored = localStorage.getItem("spendsmart_expenses");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setExpenses(parsed);
+            setIsLoadingExpenses(false);
+            return;
+          }
+        }
+
+        // 2) If no data, fetch dummy.json from public
+        const res = await fetch("/dummy.json", {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+        if (!res.ok) {
+          throw new Error("Failed to load dummy data");
+        }
+        const dummy = await res.json();
+
+        if (Array.isArray(dummy)) {
+          setExpenses(dummy);
+          localStorage.setItem(
+            "spendsmart_expenses",
+            JSON.stringify(dummy)
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        setLoadError("Could not load initial expenses.");
+      } finally {
+        setIsLoadingExpenses(false);
+      }
+    }
+
+    initExpenses();
+  }, []);
+
+  // Keep localStorage in sync whenever expenses change
+  useEffect(() => {
+    if (!isLoadingExpenses) {
+      localStorage.setItem(
+        "spendsmart_expenses",
+        JSON.stringify(expenses)
+      );
+    }
+  }, [expenses, isLoadingExpenses]);
 
   // Apply theme to <body>
   useEffect(() => {
@@ -115,7 +176,7 @@ function App() {
         {currentPage === "dashboard" && (
           <>
             <h1 className="dashboard-title">
-             
+              Dashboard
               {profile.name && `, ${profile.name}`}
             </h1>
 
@@ -123,6 +184,13 @@ function App() {
               <div className="inline-message success">
                 {message}
               </div>
+            )}
+
+            {isLoadingExpenses && (
+              <p className="empty-state">Loading your expenses...</p>
+            )}
+            {loadError && !isLoadingExpenses && (
+              <p className="form-error-message">{loadError}</p>
             )}
 
             <div className="stats-cards compact-cards">
@@ -154,7 +222,7 @@ function App() {
         {/* SEND MONEY PAGE */}
         {currentPage === "sendMoney" && (
           <>
-            <h1 className="dashboard-title"></h1>
+            <h1 className="dashboard-title">Send Money</h1>
 
             <div className="send-money-page">
               <div className="send-money-hero">
@@ -249,7 +317,7 @@ function App() {
         {/* DOWNLOAD REPORTS PAGE */}
         {currentPage === "downloadReports" && (
           <>
-            <h1 className="dashboard-title"></h1>
+            <h1 className="dashboard-title">Download Reports</h1>
 
             <div className="download-page">
               <DownloadMenu
@@ -286,9 +354,12 @@ function App() {
             <div className="analytics-card compact-card">
               <h3>How to use SpendSmart</h3>
               <p>
-                Add expenses to track spending and view trends. Use Send Money for transfers, 
-                Download Reports to export data, and Settings to manage your profile, budget,
-                 currency, and theme.
+                On the Dashboard, add expenses to track your
+                spending and view trends in the chart. Use Send
+                Money to open your preferred transfer provider,
+                Download Reports to export your data, and Settings
+                to manage your profile, budget, currency, and
+                theme.
               </p>
             </div>
           </>

@@ -420,6 +420,32 @@ body {
   color: #1e40af;
 }
 
+.expense-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.expense-filters label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.clear-filters-btn {
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
+
+
 /* ================= Settings layout ================= */
 .settings-card-wrapper {
   max-width: 700px;
