@@ -41,6 +41,9 @@ function App() {
     goal: "",
   });
 
+  // Chart category filter state
+  const [chartCategory, setChartCategory] = useState("all");
+
   const currencySymbol = currencySymbols[currency] || "€";
 
   const handleLoginSuccess = () => setIsLoggedIn(true);
@@ -173,6 +176,8 @@ function App() {
               <ExpensesChart
                 expenses={expenses}
                 currencySymbol={currencySymbol}
+                chartCategory={chartCategory}
+                setChartCategory={setChartCategory}
               />
             </div>
 
