@@ -5,6 +5,7 @@ import {
   deleteExpense,
 } from "../models/expensesModel.js";
 
+// GET /api/expenses
 export const fetchExpenses = async (req, res, next) => {
   try {
     const expenses = await getAllExpenses();
@@ -14,40 +15,50 @@ export const fetchExpenses = async (req, res, next) => {
   }
 };
 
+// POST /api/expenses
 export const createExpense = async (req, res, next) => {
   try {
     const { title, amount, category, date } = req.body;
 
-    // Basic validation
     if (!title || !amount || !category || !date) {
-      return res
-        .status(400)
-        .json({ message: "title, amount, category and date are required" });
+      return res.status(400).json({
+        message:
+          "Missing required fields: title, amount, category, date",
+      });
     }
 
-    const parsedAmount = Number(amount);
-    if (Number.isNaN(parsedAmount) || parsedAmount <= 0) {
+    const numericAmount = Number(amount);
+    if (Number.isNaN(numericAmount) || numericAmount <= 0) {
       return res
         .status(400)
-        .json({ message: "amount must be a positive number" });
+        .json({ message: "Amount must be a positive number" });
     }
 
-    const expense = await addExpense({
-      title,
-      amount: parsedAmount,
-      category,
+    const newExpense = await addExpense({
+      title: String(title),
+      amount: numericAmount,
+      category: String(category),
       date,
     });
 
-    res.status(201).json(expense);
+    res.status(201).json(newExpense);
   } catch (err) {
     next(err);
   }
 };
 
+// DELETE /api/expenses/:id
 export const removeExpense = async (req, res, next) => {
   try {
-    const deleted = await deleteExpense(req.params.id);
+    const { id } = req.params;
+
+    if (!id || Number.isNaN(Number(id))) {
+      return res
+        .status(400)
+        .json({ message: "A valid expense id is required" });
+    }
+
+    const deleted = await deleteExpense(id);
 
     if (!deleted) {
       return res.status(404).json({ message: "Expense not found" });

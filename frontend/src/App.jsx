@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-
+import api from "./lib/api.js";
 import Login from "./components/Login.jsx";
 import Signup from "./components/Signup.jsx";
 import ExpenseForm from "./components/ExpenseForm.jsx";
@@ -58,10 +58,13 @@ function App() {
     0
   );
 
-  const addExpense = (expense) => {
-    setExpenses((prev) => [...prev, expense]);
-    setMessage("Expense added successfully.");
-    setTimeout(() => setMessage(""), 2500);
+  const addExpense = async (expense) => {
+    try {
+      const res = await api.post("/expenses", expense);
+      setExpenses((prev) => [...prev, res.data]);
+    } catch (err) {
+      console.error("Failed to add expense:", err);
+    }
   };
 
   const clearAllData = () => {
@@ -83,290 +86,293 @@ function App() {
 
   // Load expenses from localStorage or dummy.json on first load
   useEffect(() => {
-    async function initExpenses() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    async function loadExpenses() {
       try {
-        // 1) Try localStorage
-        const stored = localStorage.getItem("spendsmart_expenses");
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setExpenses(parsed);
-            setIsLoadingExpenses(false);
-            return;
-          }
-        }
-
-        // 2) If no data, fetch dummy.json from public
-        const res = await fetch("/dummy.json", {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        });
-        if (!res.ok) {
-          throw new Error("Failed to load dummy data");
-        }
-        const dummy = await res.json();
-
-        if (Array.isArray(dummy)) {
-          setExpenses(dummy);
-          localStorage.setItem(
-            "spendsmart_expenses",
-            JSON.stringify(dummy)
-          );
-        }
+        const res = await api.get("/expenses");
+        setExpenses(res.data);
       } catch (err) {
-        console.error(err);
-        setLoadError("Could not load initial expenses.");
-      } finally {
-        setIsLoadingExpenses(false);
+        console.error("Failed to load expenses:", err);
       }
+      setIsLoadingExpenses(false);
     }
 
-    initExpenses();
+    loadExpenses();
   }, []);
 
-  // Keep localStorage in sync whenever expenses change
-  useEffect(() => {
-    if (!isLoadingExpenses) {
-      localStorage.setItem(
-        "spendsmart_expenses",
-        JSON.stringify(expenses)
-      );
+  // 2) If no data, fetch dummy.json from public
+  const res = await fetch("/dummy.json", {
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to load dummy data");
+  }
+  const dummy = await res.json();
+
+  if (Array.isArray(dummy)) {
+    setExpenses(dummy);
+    localStorage.setItem(
+      "spendsmart_expenses",
+      JSON.stringify(dummy)
+    );
+  }
+} catch (err) {
+  console.error(err);
+  setLoadError("Could not load initial expenses.");
+} finally {
+  setIsLoadingExpenses(false);
+}
     }
-  }, [expenses, isLoadingExpenses]);
 
-  // Apply theme to <body>
-  useEffect(() => {
-    document.body.dataset.theme = theme;
-  }, [theme]);
+initExpenses();
+  }, []);
 
-  // First-time user choice
-  if (!isLoggedIn && showSignup === null) {
-    return (
-      <div className="first-time-card">
-        <h2>Welcome to SpendSmart!</h2>
-        <p>Are you a new user or do you already have an account?</p>
-        <button onClick={() => setShowSignup(true)}>Sign Up</button>
-        <button onClick={() => setShowSignup(false)}>Login</button>
-      </div>
+// Keep localStorage in sync whenever expenses change
+useEffect(() => {
+  if (!isLoadingExpenses) {
+    localStorage.setItem(
+      "spendsmart_expenses",
+      JSON.stringify(expenses)
     );
   }
+}, [expenses, isLoadingExpenses]);
 
-  // Login / Signup
-  if (!isLoggedIn) {
-    return showSignup ? (
-      <Signup onSuccess={handleLoginSuccess} />
-    ) : (
-      <Login onSuccess={handleLoginSuccess} />
-    );
-  }
+// Apply theme to <body>
+useEffect(() => {
+  document.body.dataset.theme = theme;
+}, [theme]);
 
-  // Logged-in area with simple page navigation
+// First-time user choice
+if (!isLoggedIn && showSignup === null) {
   return (
-    <div className="dashboard-layout">
-      <Sidebar
-        currentPage={currentPage}
-        onNavigate={setCurrentPage}
-        handleLogout={handleLogout}
-      />
-
-      <main className="dashboard-main single-page-dashboard">
-        {/* DASHBOARD PAGE */}
-        {currentPage === "dashboard" && (
-          <>
-            <h1 className="dashboard-title">
-              Dashboard
-              {profile.name && `, ${profile.name}`}
-            </h1>
-
-            {message && (
-              <div className="inline-message success">
-                {message}
-              </div>
-            )}
-
-            {isLoadingExpenses && (
-              <p className="empty-state">Loading your expenses...</p>
-            )}
-            {loadError && !isLoadingExpenses && (
-              <p className="form-error-message">{loadError}</p>
-            )}
-
-            <div className="stats-cards compact-cards">
-              {/* Card 1: Add Expense form */}
-              <div className="analytics-card compact-card">
-                <ExpenseForm
-                  addExpense={addExpense}
-                  currencySymbol={currencySymbol}
-                />
-              </div>
-
-              {/* Card 2: Chart */}
-              <ExpensesChart
-                expenses={expenses}
-                currencySymbol={currencySymbol}
-              />
-            </div>
-
-            {/* Below: Expense list */}
-            <div className="dashboard-grid compact-grid">
-              <ExpenseList
-                expenses={expenses}
-                currencySymbol={currencySymbol}
-              />
-            </div>
-          </>
-        )}
-
-        {/* SEND MONEY PAGE */}
-        {currentPage === "sendMoney" && (
-          <>
-            <h1 className="dashboard-title">Send Money</h1>
-
-            <div className="send-money-page">
-              <div className="send-money-hero">
-                <h2>Choose a provider</h2>
-                <p>
-                  Select a service to send money securely to your
-                  family and friends. You will be redirected to
-                  their website.
-                </p>
-              </div>
-
-              <div className="providers-grid">
-                <button
-                  className="provider-card paypal"
-                  type="button"
-                  onClick={() =>
-                    window.open(
-                      "https://www.paypal.com/myaccount/transfer",
-                      "_blank",
-                      "noopener,noreferrer"
-                    )
-                  }
-                >
-                  <div className="provider-visual">
-                    <img
-                      src={paypalLogo}
-                      alt="PayPal logo"
-                      className="provider-logo"
-                    />
-                  </div>
-                  <h3>PayPal</h3>
-                  <p>
-                    Send and receive money worldwide with your
-                    PayPal account.
-                  </p>
-                </button>
-
-                <button
-                  className="provider-card remitly"
-                  type="button"
-                  onClick={() =>
-                    window.open(
-                      "https://www.remitly.com/",
-                      "_blank",
-                      "noopener,noreferrer"
-                    )
-                  }
-                >
-                  <div className="provider-visual">
-                    <img
-                      src={remitlyLogo}
-                      alt="Remitly logo"
-                      className="provider-logo"
-                    />
-                  </div>
-                  <h3>Remitly</h3>
-                  <p>
-                    Fast international transfers with transparent
-                    fees.
-                  </p>
-                </button>
-
-                <button
-                  className="provider-card taptap"
-                  type="button"
-                  onClick={() =>
-                    window.open(
-                      "https://www.taptapsend.com/",
-                      "_blank",
-                      "noopener,noreferrer"
-                    )
-                  }
-                >
-                  <div className="provider-visual">
-                    <img
-                      src={taptapLogo}
-                      alt="TapTap Send logo"
-                      className="provider-logo"
-                    />
-                  </div>
-                  <h3>TapTap Send</h3>
-                  <p>
-                    Send money instantly to mobile wallets in many
-                    countries.
-                  </p>
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* DOWNLOAD REPORTS PAGE */}
-        {currentPage === "downloadReports" && (
-          <>
-            <h1 className="dashboard-title">Download Reports</h1>
-
-            <div className="download-page">
-              <DownloadMenu
-                expenses={expenses}
-                currency={currency}
-                currencySymbol={currencySymbol}
-              />
-            </div>
-          </>
-        )}
-
-        {/* SETTINGS PAGE */}
-        {currentPage === "settings" && (
-          <Settings
-            profile={profile}
-            setProfile={setProfile}
-            currency={currency}
-            setCurrency={setCurrency}
-            theme={theme}
-            setTheme={setTheme}
-            monthlyBudget={monthlyBudget}
-            setMonthlyBudget={setMonthlyBudget}
-            currencySymbol={currencySymbol}
-            totalExpenses={totalExpenses}
-            clearAllData={clearAllData}
-            setMessage={setMessage}
-          />
-        )}
-
-        {/* HELP PAGE */}
-        {currentPage === "help" && (
-          <>
-            <h1 className="dashboard-title">Help</h1>
-            <div className="analytics-card compact-card">
-              <h3>How to use SpendSmart</h3>
-              <p>
-                On the Dashboard, add expenses to track your
-                spending and view trends in the chart. Use Send
-                Money to open your preferred transfer provider,
-                Download Reports to export your data, and Settings
-                to manage your profile, budget, currency, and
-                theme.
-              </p>
-            </div>
-          </>
-        )}
-      </main>
+    <div className="first-time-card">
+      <h2>Welcome to SpendSmart!</h2>
+      <p>Are you a new user or do you already have an account?</p>
+      <button onClick={() => setShowSignup(true)}>Sign Up</button>
+      <button onClick={() => setShowSignup(false)}>Login</button>
     </div>
   );
+}
+
+// Login / Signup
+if (!isLoggedIn) {
+  return showSignup ? (
+    <Signup onSuccess={handleLoginSuccess} />
+  ) : (
+    <Login onSuccess={handleLoginSuccess} />
+  );
+}
+
+// Logged-in area with simple page navigation
+return (
+  <div className="dashboard-layout">
+    <Sidebar
+      currentPage={currentPage}
+      onNavigate={setCurrentPage}
+      handleLogout={handleLogout}
+    />
+
+    <main className="dashboard-main single-page-dashboard">
+      {/* DASHBOARD PAGE */}
+      {currentPage === "dashboard" && (
+        <>
+          <h1 className="dashboard-title">
+            Dashboard
+            {profile.name && `, ${profile.name}`}
+          </h1>
+
+          {message && (
+            <div className="inline-message success">
+              {message}
+            </div>
+          )}
+
+          {isLoadingExpenses && (
+            <p className="empty-state">Loading your expenses...</p>
+          )}
+          {loadError && !isLoadingExpenses && (
+            <p className="form-error-message">{loadError}</p>
+          )}
+
+          <div className="stats-cards compact-cards">
+            {/* Card 1: Add Expense form */}
+            <div className="analytics-card compact-card">
+              <ExpenseForm
+                addExpense={addExpense}
+                currencySymbol={currencySymbol}
+              />
+            </div>
+
+            {/* Card 2: Chart */}
+            <ExpensesChart
+              expenses={expenses}
+              currencySymbol={currencySymbol}
+            />
+          </div>
+
+          {/* Below: Expense list */}
+          <div className="dashboard-grid compact-grid">
+            <ExpenseList
+              expenses={expenses}
+              currencySymbol={currencySymbol}
+            />
+          </div>
+        </>
+      )}
+
+      {/* SEND MONEY PAGE */}
+      {currentPage === "sendMoney" && (
+        <>
+          <h1 className="dashboard-title">Send Money</h1>
+
+          <div className="send-money-page">
+            <div className="send-money-hero">
+              <h2>Choose a provider</h2>
+              <p>
+                Select a service to send money securely to your
+                family and friends. You will be redirected to
+                their website.
+              </p>
+            </div>
+
+            <div className="providers-grid">
+              <button
+                className="provider-card paypal"
+                type="button"
+                onClick={() =>
+                  window.open(
+                    "https://www.paypal.com/myaccount/transfer",
+                    "_blank",
+                    "noopener,noreferrer"
+                  )
+                }
+              >
+                <div className="provider-visual">
+                  <img
+                    src={paypalLogo}
+                    alt="PayPal logo"
+                    className="provider-logo"
+                  />
+                </div>
+                <h3>PayPal</h3>
+                <p>
+                  Send and receive money worldwide with your
+                  PayPal account.
+                </p>
+              </button>
+
+              <button
+                className="provider-card remitly"
+                type="button"
+                onClick={() =>
+                  window.open(
+                    "https://www.remitly.com/",
+                    "_blank",
+                    "noopener,noreferrer"
+                  )
+                }
+              >
+                <div className="provider-visual">
+                  <img
+                    src={remitlyLogo}
+                    alt="Remitly logo"
+                    className="provider-logo"
+                  />
+                </div>
+                <h3>Remitly</h3>
+                <p>
+                  Fast international transfers with transparent
+                  fees.
+                </p>
+              </button>
+
+              <button
+                className="provider-card taptap"
+                type="button"
+                onClick={() =>
+                  window.open(
+                    "https://www.taptapsend.com/",
+                    "_blank",
+                    "noopener,noreferrer"
+                  )
+                }
+              >
+                <div className="provider-visual">
+                  <img
+                    src={taptapLogo}
+                    alt="TapTap Send logo"
+                    className="provider-logo"
+                  />
+                </div>
+                <h3>TapTap Send</h3>
+                <p>
+                  Send money instantly to mobile wallets in many
+                  countries.
+                </p>
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* DOWNLOAD REPORTS PAGE */}
+      {currentPage === "downloadReports" && (
+        <>
+          <h1 className="dashboard-title">Download Reports</h1>
+
+          <div className="download-page">
+            <DownloadMenu
+              expenses={expenses}
+              currency={currency}
+              currencySymbol={currencySymbol}
+            />
+          </div>
+        </>
+      )}
+
+      {/* SETTINGS PAGE */}
+      {currentPage === "settings" && (
+        <Settings
+          profile={profile}
+          setProfile={setProfile}
+          currency={currency}
+          setCurrency={setCurrency}
+          theme={theme}
+          setTheme={setTheme}
+          monthlyBudget={monthlyBudget}
+          setMonthlyBudget={setMonthlyBudget}
+          currencySymbol={currencySymbol}
+          totalExpenses={totalExpenses}
+          clearAllData={clearAllData}
+          setMessage={setMessage}
+        />
+      )}
+
+      {/* HELP PAGE */}
+      {currentPage === "help" && (
+        <>
+          <h1 className="dashboard-title">Help</h1>
+          <div className="analytics-card compact-card">
+            <h3>How to use SpendSmart</h3>
+            <p>
+              On the Dashboard, add expenses to track your
+              spending and view trends in the chart. Use Send
+              Money to open your preferred transfer provider,
+              Download Reports to export your data, and Settings
+              to manage your profile, budget, currency, and
+              theme.
+            </p>
+          </div>
+        </>
+      )}
+    </main>
+  </div>
+);
 }
 
 export default App;
