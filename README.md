@@ -11,3 +11,9 @@ MVP Features
 5. Search Function: Quickly find specific expenses.
 6. Total Summary: Display total spending and category-wise summaries.
 7. Responsive Design: Works well on both desktop and mobile devices.
+
+
+
+   DataBase Setup :
+   Create the database:   createdb spendsmart_db
+   Create the required tables: psql -U postgres -d spendsmart_db -f backend/schema.sql
