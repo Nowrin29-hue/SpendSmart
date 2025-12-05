@@ -171,8 +171,10 @@ body {
 }
 
 .dashboard-title {
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.75rem;
   color: #1e3a8a;
 }
 
@@ -192,9 +194,9 @@ body {
 
 /* small subtitle under card titles */
 .card-subtitle {
-  margin-top: 0;
+  margin-top: 4px;
   margin-bottom: 10px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #6b7280;
 }
 
@@ -207,23 +209,27 @@ body {
 }
 
 .analytics-card,
-.summary {
-  padding: 25px;
+.summary,
+.expense-card {
+  padding: 16px 18px;
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .analytics-card:hover,
-.summary:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+.summary:hover,
+.expense-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
 }
 
 .analytics-card h3,
-.summary h3 {
-  margin-bottom: 15px;
+.summary h3,
+.expense-card h3 {
+  margin-bottom: 10px;
   color: #1e3a8a;
 }
 
@@ -244,7 +250,7 @@ body {
   outline: none;
 }
 
-/* ================= Savings bar visuals (unused now but kept) ================= */
+/* ================= Savings bar visuals ================= */
 .savings-bar-container {
   width: 100%;
   height: 12px;
@@ -389,15 +395,15 @@ body {
   color: #4b5563;
 }
 
+/* Expense list rows */
 .expense-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
-  margin-bottom: 8px;
+  padding: 6px 8px;
+  margin-bottom: 4px;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+  background: #f8fafc;
 }
 
 .expense-main {
@@ -406,24 +412,25 @@ body {
 }
 
 .expense-title {
-  font-weight: 600;
+  font-weight: 500;
   color: #111827;
 }
 
 .expense-meta {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: #64748b;
 }
 
 .expense-amount {
   font-weight: 600;
-  color: #1e40af;
+  color: #0f172a;
 }
 
+/* Expense filters aligned with chart filters */
 .expense-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.75rem;
   align-items: center;
   margin-bottom: 8px;
   font-size: 0.9rem;
@@ -432,19 +439,26 @@ body {
 .expense-filters label {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.35rem;
+}
+
+.expense-filters select {
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid #cbd5f5;
+  background: #f8fafc;
+  font-size: 0.85rem;
 }
 
 .clear-filters-btn {
-  padding: 2px 8px;
+  padding: 4px 10px;
   font-size: 0.8rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background: #f5f5f5;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
   cursor: pointer;
 }
-
-
 
 /* ================= Settings layout ================= */
 .settings-card-wrapper {
@@ -565,7 +579,7 @@ body {
   margin-bottom: 15px;
 }
 
-/* ================= Budget status text (if used) ================= */
+/* ================= Budget status text ================= */
 .budget-status {
   margin: 6px 0 10px 0;
   font-size: 0.9rem;
@@ -579,26 +593,72 @@ body {
   color: #b91c1c;
 }
 
-/* ================= Chart toggle buttons ================= */
+/* ================= Chart header & toggle ================= */
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.chart-header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Title + toggle on one row */
+.chart-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Weekly / monthly toggle as segmented control */
 .chart-toggle {
   display: inline-flex;
-  gap: 8px;
-  margin-bottom: 10px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  padding: 2px;
 }
 
 .chart-toggle-btn {
-  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
   font-size: 0.85rem;
+  color: #64748b;
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .chart-toggle-btn.active {
-  background: #4f46e5;
-  border-color: #4f46e5;
-  color: white;
+  background: #0f172a;
+  color: #f9fafb;
+}
+
+/* Category dropdown aligned with header */
+.chart-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.chart-filter-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.chart-filters select {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #cbd5f5;
+  background: #f8fafc;
+  font-size: 0.85rem;
 }
 
 /* ================= Theme: light / dark via body[data-theme] ================= */

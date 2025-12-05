@@ -14,7 +14,7 @@ const pool = new Pool({
   port: process.env.PG_PORT || 5432,
 });
 
-// Test connection
+// Optional: test connection
 pool
   .query("SELECT 1")
   .then(() => console.log("✅ Connected to PostgreSQL"))

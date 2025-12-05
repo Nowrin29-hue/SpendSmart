@@ -15,7 +15,7 @@ export default function Settings({
 }) {
   return (
     <>
-      <h1 className="dashboard-title"></h1>
+      <h1 className="dashboard-title">Settings</h1>
 
       <div className="settings-card-wrapper">
         <div className="expense-card">

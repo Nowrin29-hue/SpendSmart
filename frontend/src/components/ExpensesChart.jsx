@@ -38,17 +38,41 @@ function formatYYYYMM(date) {
   return `${y}-${m}`;
 }
 
-export default function ExpensesChart({ expenses, currencySymbol }) {
+export default function ExpensesChart({
+  expenses,
+  currencySymbol,
+  chartCategory,
+  setChartCategory,
+}) {
   const [mode, setMode] = useState("weekly"); // "weekly" | "monthly"
 
+  // Unique categories from expenses
+  const categories = useMemo(() => {
+    const set = new Set();
+    expenses.forEach((e) => {
+      if (e.category) set.add(e.category);
+    });
+    return Array.from(set).sort();
+  }, [expenses]);
+
+  // Filtered by selected category (or all)
+  const filteredExpenses = useMemo(
+    () =>
+      chartCategory === "all"
+        ? expenses
+        : expenses.filter((e) => e.category === chartCategory),
+    [expenses, chartCategory]
+  );
+
+  // Build labels and data points based on weekly/monthly mode
   const { labels, dataPoints } = useMemo(() => {
-    if (!expenses || expenses.length === 0) {
+    if (!filteredExpenses || filteredExpenses.length === 0) {
       return { labels: [], dataPoints: [] };
     }
 
     const byPeriod = new Map();
 
-    expenses.forEach((e) => {
+    filteredExpenses.forEach((e) => {
       if (!e.date) return;
       const d = new Date(e.date);
       if (Number.isNaN(d)) return;
@@ -68,9 +92,7 @@ export default function ExpensesChart({ expenses, currencySymbol }) {
       });
     });
 
-    // Sort keys (oldest to newest)
     const sortedKeys = Array.from(byPeriod.keys()).sort();
-    // Take last 12 periods
     const last12 = sortedKeys.slice(-12);
 
     const labels = last12;
@@ -80,7 +102,7 @@ export default function ExpensesChart({ expenses, currencySymbol }) {
     });
 
     return { labels, dataPoints };
-  }, [expenses, mode]);
+  }, [filteredExpenses, mode]);
 
   const chartData = {
     labels,
@@ -127,35 +149,58 @@ export default function ExpensesChart({ expenses, currencySymbol }) {
 
   return (
     <div className="analytics-card compact-card">
-      <h3>Spending trends</h3>
-      <p className="card-subtitle">
-        See your average spending over time. Switch between weekly
-        and monthly views.
-      </p>
+      <div className="chart-header">
+        <div className="chart-header-main">
+          <div className="chart-title-row">
+            <h3>Spending trends</h3>
+            <div className="chart-toggle">
+              <button
+                type="button"
+                className={
+                  mode === "weekly"
+                    ? "chart-toggle-btn active"
+                    : "chart-toggle-btn"
+                }
+                onClick={() => setMode("weekly")}
+              >
+                Weekly
+              </button>
+              <button
+                type="button"
+                className={
+                  mode === "monthly"
+                    ? "chart-toggle-btn active"
+                    : "chart-toggle-btn"
+                }
+                onClick={() => setMode("monthly")}
+              >
+                Monthly
+              </button>
+            </div>
+          </div>
 
-      <div className="chart-toggle">
-        <button
-          type="button"
-          className={
-            mode === "weekly"
-              ? "chart-toggle-btn active"
-              : "chart-toggle-btn"
-          }
-          onClick={() => setMode("weekly")}
-        >
-          Weekly
-        </button>
-        <button
-          type="button"
-          className={
-            mode === "monthly"
-              ? "chart-toggle-btn active"
-              : "chart-toggle-btn"
-          }
-          onClick={() => setMode("monthly")}
-        >
-          Monthly
-        </button>
+          <p className="card-subtitle">
+            Track how your average spending changes over time, for all
+            categories or a single one.
+          </p>
+        </div>
+
+        <div className="chart-filters">
+          <label className="chart-filter-label">
+            Category
+            <select
+              value={chartCategory}
+              onChange={(e) => setChartCategory(e.target.value)}
+            >
+              <option value="all">All categories</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
       </div>
 
       {labels.length === 0 ? (

@@ -39,9 +39,15 @@ export const signup = async (req, res, next) => {
         .json({ message: "Username already taken" });
     }
 
-    const passwordHash = bcrypt.hashSync(password, 10);
+    // IMPORTANT FIX:
+    // DB column is "password_hash", not "passwordHash"
+    const password_hash = bcrypt.hashSync(password, 10);
 
-    const user = await createUser({ username, passwordHash });
+    // Create user with correct DB field name
+    const user = await createUser({
+      username,
+      password_hash,
+    });
 
     const token = generateToken(user);
 
@@ -76,10 +82,7 @@ export const login = async (req, res, next) => {
         .json({ message: "Invalid username or password" });
     }
 
-    const isMatch = bcrypt.compareSync(
-      password,
-      user.password_hash
-    );
+    const isMatch = bcrypt.compareSync(password, user.password_hash);
     if (!isMatch) {
       return res
         .status(401)
