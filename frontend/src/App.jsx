@@ -41,8 +41,8 @@ function App() {
     goal: "",
   });
 
-  // Chart category filter state
-  const [chartCategory, setChartCategory] = useState("all");
+  // Chart category filter state (you can wire this into ExpensesChart later)
+  // const [chartCategory, setChartCategory] = useState("all");
 
   const currencySymbol = currencySymbols[currency] || "€";
 
@@ -82,6 +82,7 @@ function App() {
     localStorage.removeItem("spendsmart_expenses");
   };
 
+<<<<<<< Updated upstream
   // Load expenses from DB
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -91,20 +92,87 @@ function App() {
     }
 
     async function loadExpenses() {
+=======
+  // Load expenses from backend, localStorage or dummy.json on first load
+  useEffect(() => {
+    async function initExpenses() {
+>>>>>>> Stashed changes
       try {
-        const res = await api.get("/expenses");
-        setExpenses(res.data);
+        const token = localStorage.getItem("token");
+
+        // 1) If logged in, try backend first
+        if (token) {
+          try {
+            const res = await api.get("/expenses");
+            if (Array.isArray(res.data) && res.data.length > 0) {
+              setExpenses(res.data);
+              setIsLoadingExpenses(false);
+              return;
+            }
+          } catch (err) {
+            console.error("Failed to load expenses from API:", err);
+          }
+        }
+
+        // 2) Try localStorage
+        const stored = localStorage.getItem("spendsmart_expenses");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setExpenses(parsed);
+            setIsLoadingExpenses(false);
+            return;
+          }
+        }
+
+        // 3) If still no data, fetch dummy.json from public
+        try {
+          const res = await fetch("/dummy.json", {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          });
+
+          if (!res.ok) {
+            throw new Error("Failed to load dummy data");
+          }
+
+          const dummy = await res.json();
+
+          if (Array.isArray(dummy)) {
+            setExpenses(dummy);
+            localStorage.setItem(
+              "spendsmart_expenses",
+              JSON.stringify(dummy)
+            );
+          }
+        } catch (err) {
+          console.error("Failed to load dummy.json:", err);
+          setLoadError("Could not load initial expenses.");
+        } finally {
+          setIsLoadingExpenses(false);
+        }
       } catch (err) {
+<<<<<<< Updated upstream
         console.error("Failed to load expenses:", err);
         setLoadError("Could not load expenses.");
+=======
+        console.error(err);
+        setLoadError("Could not load initial expenses.");
+        setIsLoadingExpenses(false);
+>>>>>>> Stashed changes
       }
-      setIsLoadingExpenses(false);
     }
 
-    loadExpenses();
+    initExpenses();
   }, []);
 
+<<<<<<< Updated upstream
   // Save expenses to localStorage
+=======
+  // Keep localStorage in sync whenever expenses change
+>>>>>>> Stashed changes
   useEffect(() => {
     if (!isLoadingExpenses) {
       localStorage.setItem(
@@ -114,12 +182,20 @@ function App() {
     }
   }, [expenses, isLoadingExpenses]);
 
+<<<<<<< Updated upstream
   // Apply theme
+=======
+  // Apply theme to <body>
+>>>>>>> Stashed changes
   useEffect(() => {
     document.body.dataset.theme = theme;
   }, [theme]);
 
+<<<<<<< Updated upstream
   // FIRST-TIME WELCOME SCREEN
+=======
+  // First-time user choice
+>>>>>>> Stashed changes
   if (!isLoggedIn && showSignup === null) {
     return (
       <div className="first-time-card">
@@ -131,7 +207,11 @@ function App() {
     );
   }
 
+<<<<<<< Updated upstream
   // LOGIN / SIGNUP
+=======
+  // Login / Signup
+>>>>>>> Stashed changes
   if (!isLoggedIn) {
     return showSignup ? (
       <Signup onSuccess={handleLoginSuccess} />
@@ -140,7 +220,11 @@ function App() {
     );
   }
 
+<<<<<<< Updated upstream
   // LOGGED-IN APP LAYOUT
+=======
+  // Logged-in area with simple page navigation
+>>>>>>> Stashed changes
   return (
     <div className="dashboard-layout">
       <Sidebar
@@ -150,6 +234,7 @@ function App() {
       />
 
       <main className="dashboard-main single-page-dashboard">
+<<<<<<< Updated upstream
 
         {/* DASHBOARD */}
         {currentPage === "dashboard" && (
@@ -166,12 +251,38 @@ function App() {
             )}
 
             <div className="stats-cards compact-cards">
+=======
+        {/* DASHBOARD PAGE */}
+        {currentPage === "dashboard" && (
+          <>
+            <h1 className="dashboard-title">
+              Dashboard
+              {profile.name && `, ${profile.name}`}
+            </h1>
+
+            {message && (
+              <div className="inline-message success">
+                {message}
+              </div>
+            )}
+
+            {isLoadingExpenses && (
+              <p className="empty-state">Loading your expenses...</p>
+            )}
+            {loadError && !isLoadingExpenses && (
+              <p className="form-error-message">{loadError}</p>
+            )}
+
+            <div className="stats-cards compact-cards">
+              {/* Card 1: Add Expense form */}
+>>>>>>> Stashed changes
               <div className="analytics-card compact-card">
                 <ExpenseForm
                   addExpense={addExpense}
                   currencySymbol={currencySymbol}
                 />
               </div>
+<<<<<<< Updated upstream
 
               <ExpensesChart
                 expenses={expenses}
@@ -180,6 +291,8 @@ function App() {
                 setChartCategory={setChartCategory}
               />
             </div>
+=======
+>>>>>>> Stashed changes
 
             <div className="dashboard-grid compact-grid">
               <ExpenseList
@@ -190,6 +303,7 @@ function App() {
           </>
         )}
 
+<<<<<<< Updated upstream
         {/* SEND MONEY */}
         {currentPage === "sendMoney" && (
           <>
@@ -208,18 +322,94 @@ function App() {
                 >
                   <img src={paypalLogo} alt="PayPal" className="provider-logo" />
                   <h3>PayPal</h3>
+=======
+            {/* Below: Expense list */}
+            <div className="dashboard-grid compact-grid">
+              <ExpenseList
+                expenses={expenses}
+                currencySymbol={currencySymbol}
+              />
+            </div>
+          </>
+        )}
+
+        {/* SEND MONEY PAGE */}
+        {currentPage === "sendMoney" && (
+          <>
+            <h1 className="dashboard-title">Send Money</h1>
+
+            <div className="send-money-page">
+              <div className="send-money-hero">
+                <h2>Choose a provider</h2>
+                <p>
+                  Select a service to send money securely to your
+                  family and friends. You will be redirected to
+                  their website.
+                </p>
+              </div>
+
+              <div className="providers-grid">
+                <button
+                  className="provider-card paypal"
+                  type="button"
+                  onClick={() =>
+                    window.open(
+                      "https://www.paypal.com/myaccount/transfer",
+                      "_blank",
+                      "noopener,noreferrer"
+                    )
+                  }
+                >
+                  <div className="provider-visual">
+                    <img
+                      src={paypalLogo}
+                      alt="PayPal logo"
+                      className="provider-logo"
+                    />
+                  </div>
+                  <h3>PayPal</h3>
+                  <p>
+                    Send and receive money worldwide with your
+                    PayPal account.
+                  </p>
+>>>>>>> Stashed changes
                 </button>
 
                 <button
                   className="provider-card remitly"
+<<<<<<< Updated upstream
                   onClick={() => window.open("https://www.remitly.com/", "_blank")}
                 >
                   <img src={remitlyLogo} alt="Remitly" className="provider-logo" />
                   <h3>Remitly</h3>
+=======
+                  type="button"
+                  onClick={() =>
+                    window.open(
+                      "https://www.remitly.com/",
+                      "_blank",
+                      "noopener,noreferrer"
+                    )
+                  }
+                >
+                  <div className="provider-visual">
+                    <img
+                      src={remitlyLogo}
+                      alt="Remitly logo"
+                      className="provider-logo"
+                    />
+                  </div>
+                  <h3>Remitly</h3>
+                  <p>
+                    Fast international transfers with transparent
+                    fees.
+                  </p>
+>>>>>>> Stashed changes
                 </button>
 
                 <button
                   className="provider-card taptap"
+<<<<<<< Updated upstream
                   onClick={() => window.open("https://www.taptapsend.com/", "_blank")}
                 >
                   <img src={taptapLogo} alt="TapTap Send" className="provider-logo" />
@@ -273,6 +463,85 @@ function App() {
           </>
         )}
 
+=======
+                  type="button"
+                  onClick={() =>
+                    window.open(
+                      "https://www.taptapsend.com/",
+                      "_blank",
+                      "noopener,noreferrer"
+                    )
+                  }
+                >
+                  <div className="provider-visual">
+                    <img
+                      src={taptapLogo}
+                      alt="TapTap Send logo"
+                      className="provider-logo"
+                    />
+                  </div>
+                  <h3>TapTap Send</h3>
+                  <p>
+                    Send money instantly to mobile wallets in many
+                    countries.
+                  </p>
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* DOWNLOAD REPORTS PAGE */}
+        {currentPage === "downloadReports" && (
+          <>
+            <h1 className="dashboard-title">Download Reports</h1>
+
+            <div className="download-page">
+              <DownloadMenu
+                expenses={expenses}
+                currency={currency}
+                currencySymbol={currencySymbol}
+              />
+            </div>
+          </>
+        )}
+
+        {/* SETTINGS PAGE */}
+        {currentPage === "settings" && (
+          <Settings
+            profile={profile}
+            setProfile={setProfile}
+            currency={currency}
+            setCurrency={setCurrency}
+            theme={theme}
+            setTheme={setTheme}
+            monthlyBudget={monthlyBudget}
+            setMonthlyBudget={setMonthlyBudget}
+            currencySymbol={currencySymbol}
+            totalExpenses={totalExpenses}
+            clearAllData={clearAllData}
+            setMessage={setMessage}
+          />
+        )}
+
+        {/* HELP PAGE */}
+        {currentPage === "help" && (
+          <>
+            <h1 className="dashboard-title">Help</h1>
+            <div className="analytics-card compact-card">
+              <h3>How to use SpendSmart</h3>
+              <p>
+                On the Dashboard, add expenses to track your
+                spending and view trends in the chart. Use Send
+                Money to open your preferred transfer provider,
+                Download Reports to export your data, and Settings
+                to manage your profile, budget, currency, and
+                theme.
+              </p>
+            </div>
+          </>
+        )}
+>>>>>>> Stashed changes
       </main>
     </div>
   );
